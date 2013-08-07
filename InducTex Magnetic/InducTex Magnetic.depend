@@ -1,0 +1,35 @@
+# depslib dependency file v1.0
+1375298825 source:c:\users\metabee\documents\fourie\inductex magnetic\main.c
+	"src/DataTypes.h"
+	"src/FileReader.h"
+	"src/JToB.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"main.h"
+
+1375115459 source:c:\users\metabee\documents\fourie\inductex magnetic\src\datatypes.c
+	<stdlib.h>
+	<stdio.h>
+	"DataTypes.h"
+
+1375114570 c:\users\metabee\documents\fourie\inductex magnetic\src\datatypes.h
+
+1375299739 source:c:\users\metabee\documents\fourie\inductex magnetic\src\filereader.c
+	<stdio.h>
+	<stdlib.h>
+	"DataTypes.h"
+
+1375297440 c:\users\metabee\documents\fourie\inductex magnetic\src\filereader.h
+
+1375298018 source:c:\users\metabee\documents\fourie\inductex magnetic\src\jtob.c
+	<stdlib.h>
+	<stdio.h>
+	"DataTypes.h"
+	<math.h>
+	"JToB.h"
+
+1375302447 c:\users\metabee\documents\fourie\inductex magnetic\src\jtob.h
+
+1374422073 c:\users\metabee\documents\fourie\inductex magnetic\main.h
+
