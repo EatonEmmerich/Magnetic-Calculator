@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
                 //printf("\ninside switch if\n");
                 switch(argv[2][1]){
                     case 'p' :
-                       // printf("\ninside p case\n");
+                        printf("\ninside p case\n");
                         if(argc == 4){
                             flag = 0;
                         }else{
@@ -66,13 +66,13 @@ int main(int argc, char *argv[])
                         }
                                 break;
                     case 'm' :
-                        //printf("\ninside m case  %i\n", argc);
+                        printf("\ninside m case  %i\n", argc);
                         if(argc == 12){
                             flag = 1;
                         }else if(argc == 6){
                             flag = 2;
                         }else if(argc == 3){
-                            //printf("flag = 3");
+                            printf("flag = 3");
                             flag = 3;
                         }else{
                             printf("\nIncorrect parameters, please use one of the following:");
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
                     print_help();
                         return -2;
                 }
-                //printf("\npast switch\n");
+                printf("\npast switch\n");
             }
             else
             {
@@ -114,10 +114,14 @@ int main(int argc, char *argv[])
             }
         }
     }
-    //if(syntax == 1){
-    if(get_data(&j_field,&dimensions,filename)) isvalidfile = 1;
+
+    if(get_data(&j_field,&dimensions,filename) == 1) {
+            isvalidfile = 1;
+            //printf("isvalid");
+    }
     if(flag == 0 && isvalidfile){
-        if(get_vect_list(argv[3],&calc_position)){
+        printf("swww");
+        if(get_vect_list(argv[3],&calc_position) == 1){
         }
         else{
             isvalidfile = 0;
@@ -154,9 +158,8 @@ int main(int argc, char *argv[])
     }
     else if(flag == 3 && isvalidfile)calc_position = bounded_position(j_field);
     if(isvalidfile){
-        //printf("\nUsing position with data in index 1: %lf %lf %lf\n", calc_position->vector_element->x, calc_position->vector_element->y, calc_position->vector_element->z);
-        //printf("\nUsing dim with data in index 1: %lf %lf %lf\n", dimensions->vector_element->x, dimensions->vector_element->y, dimensions->vector_element->z);
-        //printf("1\n");
+        printf("\nUsing position with data in index 1: %lf %lf %lf\n", calc_position->vector_element->x, calc_position->vector_element->y, calc_position->vector_element->z);
+        printf("\nUsing dim with data in index 1: %lf %lf %lf\n", dimensions->vector_element->x, dimensions->vector_element->y, dimensions->vector_element->z);
         b_field = calculateBfield(calc_position, j_field, dimensions);
         printf("\ncompleted calculating B field.\nSaving data to disk.");
         filename = strcat(filename,"BF");
@@ -188,6 +191,7 @@ vect_list * create_calc_position( double xl, double yl, double zl, double xh, do
     xtmp = xh;
     while(xtmp > xl){
         ytmp = yh;
+        //printf("YH");
         while(ytmp > yl){
             ztmp = zh;
             while(ztmp > zl){
@@ -201,16 +205,14 @@ vect_list * create_calc_position( double xl, double yl, double zl, double xh, do
             }
             if(ytmp - yi < yl){
                 ytmp = yl;
-            }
-            else{
+            }else{
                 ytmp = ytmp - yi;
             }
         }
         if(xtmp - xi < xl){
             xtmp = xl;
-        }
-        else{
-            ztmp = ztmp - zi;
+        }else{
+            xtmp = xtmp - xi;
         }
     }
     return position_start;

@@ -37,6 +37,7 @@ int get_vect_list(char * filename, vect_list ** vectlist_start){
     *vectlist_start = NULL;
     double px, py, pz;
     FILE * inputfile;
+    printf("print start");
     printf("\nOpening file \'%s\' for area to calculate.", filename);
     inputfile = fopen(filename,"r");
     if(inputfile == NULL){

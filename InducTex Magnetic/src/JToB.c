@@ -289,22 +289,31 @@ position_vector * calculateBfield(vect_list* calc_position, position_vector * cu
 vect * indefintegral(vect * pin){
     vect * indef = (vect*)malloc(sizeof(vect));
     double a = 0.00;
+
     a = sqrt(pin->x*pin->x+ //frequently used
             pin->y*pin->y+
             pin->z*pin->z);
-    indef->x = (pin->y - pin->x*atan(pin->y/pin->x) + pin->x*atan(pin->y*pin->z/(pin->x*a))
-               - pin->z*log(2*(pin->y+a)) - pin->y*log(2*(pin->z+a)));
-    indef->y = (pin->z - pin->y*atan(pin->z/pin->y) + pin->y*atan(pin->z*pin->x/(pin->y*a))
-               - pin->x*log(2*(pin->z+a)) - pin->z*log(2*(pin->x+a)));
-    indef->z = (pin->x - pin->z*atan(pin->x/pin->z) + pin->z*atan(pin->x*pin->y/(pin->z*a))
-               - pin->y*log(2*(pin->x+a)) - pin->x*log(2*(pin->y+a)));
+
+    if((a != 0) && (pin->y != 0) && (pin->z != 0)){
+        indef->x = (pin->y - pin->x*atan(pin->y/pin->x) + pin->x*atan(pin->y*pin->z/(pin->x*a))
+                   - pin->z*log(2*(pin->y+a)) - pin->y*log(2*(pin->z+a)));
+        indef->y = (pin->z - pin->y*atan(pin->z/pin->y) + pin->y*atan(pin->z*pin->x/(pin->y*a))
+                   - pin->x*log(2*(pin->z+a)) - pin->z*log(2*(pin->x+a)));
+        indef->z = (pin->x - pin->z*atan(pin->x/pin->z) + pin->z*atan(pin->x*pin->y/(pin->z*a))
+                   - pin->y*log(2*(pin->x+a)) - pin->x*log(2*(pin->y+a)));
+    }
+    else{
+        indef->x = 0;
+        indef->y = 0;
+        indef->z = 0;
+    }
 
     return indef;
 }
 
-/*                                 (Elevation)
+/*                                (Elevation)
  * return a vector in form (Azimuth, Altitude, Radius)
- *                                (x,y,z)
+ *                                  (x,y,z)
  */
 vect * cartesianToSpherical(vect * cart){
     vect * spherical = (vect*)malloc(sizeof(vect));
