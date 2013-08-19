@@ -175,7 +175,6 @@ vect_list * create_calc_position( double xl, double yl, double zl, double xh, do
     vect_list * position = NULL;
     vect_list * position_start = NULL;
     double xtmp, ytmp, ztmp;
-    int zb,yb,xb;
     printf("\nUsing cubic position matrix with:");
     printf("\nlow x = %lf",xl);
     printf("\nlow y = %lf",yl);
@@ -187,37 +186,31 @@ vect_list * create_calc_position( double xl, double yl, double zl, double xh, do
     printf("\ny intervals = %lf",yi);
     printf("\nz intervals = %lf",zi);
     xtmp = xh;
-    xb = 0;
-    while(xtmp >= xl){
+    while(xtmp > xl){
         ytmp = yh;
-        yb = 0;
-        while(ytmp >= yl){
+        while(ytmp > yl){
             ztmp = zh;
-            zb = 0;
-            while(ztmp >= zl){
+            while(ztmp > zl){
                 add_vector_val(&position_start, &position, xtmp, ytmp, ztmp);
-                if(ztmp - zi < zl && zb == 0){
+                if(ztmp - zi <= zl){
                     ztmp = zl;
-                    zb = 1;
                 }
                 else{
                     ztmp = ztmp - zi;
                 }
             }
-            if(ytmp - yi < yl && yb == 0){
+            if(ytmp - yi < yl){
                 ytmp = yl;
-                yb = 1;
             }
             else{
                 ytmp = ytmp - yi;
             }
         }
-        if(xtmp - xi < xl && xb == 0){
+        if(xtmp - xi < xl){
             xtmp = xl;
-            xb = 1;
         }
         else{
-            xtmp = xtmp - xi;
+            ztmp = ztmp - zi;
         }
     }
     return position_start;
