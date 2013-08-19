@@ -1,1 +1,17 @@
-test
+/*
+ *  This program uses the equations and algorithms found in
+ *  "Mean square flux noise in SQUIDs and qubits: numerical
+ *  calculations" by S M Anton, I A B Sognnaes,
+ *  J S Birenbaum, S R O’Kelley,C J Fourie and John Clarke.
+ *  to determine the magnetic field intensity at given points
+ *  induced by a current density matix recieved by InducEx.
+ *  The program was first made in Matlab by Steven M Anton and then
+ *  re-written into C by Eaton Meyer Emmerich.
+ *
+ *  This program is used through a command terminal with the
+ *  following parameters:
+ *  % (current density filename) ([-p] [-m] [-h]) (arg1 arg2 arg3 ...)
+ *
+ */
+ 
+ 
