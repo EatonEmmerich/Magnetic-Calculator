@@ -31,4 +31,5 @@ int compare_vectors(vect * vect_a, vect * vect_b);
 void free_vect_list(vect_list ** tempvect);
 void halfofvect(vect_list ** input);
 void position_vector_divten(position_vector ** input);
+void add_position_vector_pointer(position_vector** data_list_first, position_vector ** data_list_last, position_vector * data_input);
 #endif // DATAHANDLING_H_INCLUDED

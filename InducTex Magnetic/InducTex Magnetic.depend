@@ -33,3 +33,38 @@
 
 1376938367 c:\users\metabee\documents\fourie\inductex magnetic\main.h
 
+1376938367 source:c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\src\datatypes.c
+	<stdlib.h>
+	<stdio.h>
+	"DataTypes.h"
+
+1377351535 c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\src\datatypes.h
+
+1376944289 source:c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\src\filereader.c
+	<stdio.h>
+	<stdlib.h>
+	"DataTypes.h"
+
+1376942273 source:c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\src\jtob.c
+	<stdlib.h>
+	<stdio.h>
+	"DataTypes.h"
+	<math.h>
+	"JToB.h"
+
+1376938367 c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\src\jtob.h
+
+1377351560 source:c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\main.c
+	"src/DataTypes.h"
+	"src/FileReader.h"
+	"src/JToB.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<omp.h>
+	"main.h"
+
+1376938367 c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\src\filereader.h
+
+1377351481 c:\users\metabee\documents\git repositorys\magnetic-calculator\inductex magnetic\main.h
+

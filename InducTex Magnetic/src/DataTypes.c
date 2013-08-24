@@ -63,6 +63,31 @@ void add_position_vector(position_vector** data_list_first, position_vector ** d
     }
 }
 
+void add_position_vector_pointer(position_vector** data_list_first, position_vector ** data_list_last, position_vector * data_input){
+    vect * position = NULL;
+    vect * curdens = NULL;
+    position_vector * newdata = NULL;
+    newdata = (position_vector *)malloc(sizeof(position_vector));
+
+    if(newdata != NULL || position != NULL || newdata != NULL){    //enough memory available.
+        position = data_input->position;
+        curdens = data_input->current_density;
+        newdata->next = NULL;
+        newdata->position = position;
+        newdata->current_density = curdens;
+        if(*data_list_first != NULL){//not first element
+            (*data_list_last)->next = newdata;
+            *data_list_last = newdata;
+        }else{
+            *data_list_first = newdata;
+            *data_list_last = *data_list_first;
+        }
+    }
+    else{
+        printf("\nout of memory error.\n");
+    }
+}
+
 void free_all(position_vector* data_list_first){
     position_vector* temp = data_list_first->next;
 

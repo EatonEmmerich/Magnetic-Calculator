@@ -22,22 +22,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 #include "main.h"
-
-
+#define MAX_THREADS 16
 
 int main(int argc, char *argv[])
 {
-    position_vector * j_field = NULL;  //imported j field
-    position_vector * b_field;  //calculated b_field
+    position_vector * j_field [MAX_THREADS];  //imported j field
+    position_vector * j_field_total = NULL;
+    position_vector * j_field_last = NULL;
+    position_vector * b_field[MAX_THREADS];  //calculated b_field
+    position_vector * b_field_total;
     vect_list * calc_position;  //position for b_field to be calculated
-    vect_list * dimensions = NULL;     //description of j field segments
+    vect_list * dimensions_total = NULL;     //description of j field segments
+    vect_list * dimensions[MAX_THREADS];
+    vect_list * dimensions_last = NULL;
     char * filename;
     char flag = 0;
     char isvalidfile = 0;
     double coords[9];
     int coordcounter = 0;
     char * inputvalid;
+    int num_threads = 2;
+    int threadcounter = 0;
+    int sizecounter = 0;
+    int input_length = 0;
+
+    //initialize j_field and b_fields to NULL
+    for (coordcounter = 0; coordcounter < MAX_THREADS; coordcounter++){
+        j_field[coordcounter] = NULL;
+        b_field[coordcounter] = NULL;
+        dimensions[coordcounter] = NULL;
+    }
+
 
     if (!(argc == 2 || argc == 3 || argc == 4 || argc == 12 || argc == 6)) // argc should be 2 or 4 or 9 for correct execution
     {
@@ -115,7 +132,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if(get_data(&j_field,&dimensions,filename) == 1) {
+    if(get_data(&j_field_total,&dimensions_total,filename) == 1) {
             isvalidfile = 1;
             //printf("isvalid");
     }
@@ -154,18 +171,55 @@ int main(int argc, char *argv[])
             printf("\nImpossible to have a interval size of zero or less.");
             return -4;
         }
-        calc_position = bounded_position_interval(j_field,coords[0], coords[1], coords[2]);
+        calc_position = bounded_position_interval(j_field_total,coords[0], coords[1], coords[2]);
     }
-    else if(flag == 3 && isvalidfile)calc_position = bounded_position(j_field);
+    else if(flag == 3 && isvalidfile)calc_position = bounded_position(j_field_total);
+
     if(isvalidfile){
         printf("\nUsing position with data in index 1: %lf %lf %lf\n", calc_position->vector_element->x, calc_position->vector_element->y, calc_position->vector_element->z);
-        printf("\nUsing dim with data in index 1: %lf %lf %lf\n", dimensions->vector_element->x, dimensions->vector_element->y, dimensions->vector_element->z);
-        b_field = calculateBfield(calc_position, j_field, dimensions);
+        printf("\nUsing dim with data in index 1: %lf %lf %lf\n", dimensions_total->vector_element->x, dimensions_total->vector_element->y, dimensions_total->vector_element->z);
+
+        /***********************************************
+         *         Add threaded functionality:         *
+         ***********************************************/
+        input_length = get_length(j_field_total);
+        for(threadcounter = 0; threadcounter < num_threads; threadcounter++){
+            dimensions_last = dimensions[threadcounter];
+            j_field_last = j_field[threadcounter];
+
+            for(sizecounter = 0; sizecounter < (input_length / num_threads); sizecounter++){
+                if((j_field_total != NULL) && (dimensions_total != NULL)){
+                    add_position_vector_pointer(&(j_field[threadcounter]),&j_field_last,j_field_total);
+                    //j_field[threadcounter] = j_field_total;
+                    add_vector(&(dimensions[threadcounter]),&dimensions_last,dimensions_total);
+                    //dimensions[threadcounter] = dimensions_total;
+                    j_field_total = j_field_total->next;
+                    dimensions_total = dimensions_total->next;
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        #pragma omp parallel for [shared(calc_position,j_field,b_field), default(private)]
+        //A,B,C such that total iterations known at start of loop
+        for(threadcounter=0;threadcounter<MAX_THREADS;threadcounter++) {
+        //<your code here>
+        //<force ordered execution of part of the code. A=C willbe guaranteed to execute
+        //before A=C+1>
+            b_field[threadcounter] = calculateBfield(calc_position, j_field[threadcounter], dimensions[threadcounter]);
+           /* #pragma omp ordered
+                {
+                    //<your code here>
+                }*/
+        }
+        //b_field = calculateBfield(calc_position, j_field[], dimensions[]);
         printf("\ncompleted calculating B field.\nSaving data to disk.");
         filename = strcat(filename,"BF");
-        save_position_vector(b_field,filename);
+        save_position_vector(b_field_total,filename);
     }
-    /*}
+
+    /*
     else{
         printf("Usable Syntax: %s (current density filename) ([-p] [-m] [-b] [-help]) (arg1 arg2 arg3 ...)",argv[0]);
         printf( "\n\texample: %s ./currdens.txt\nFor more information use %s -help", argv[0],argv[0]);
@@ -273,4 +327,13 @@ void print_help(){
     printf("\n\n**[(x interval) (y interval) (z interval)]\tWill automatically bound to\n\t\t\t\t\t\tcurrent density input values.");
     printf("\n\n**[ ]\tWill automatically bound to current density input values with 10\n\tintervals in each dimension.");
 
+}
+
+int get_length(position_vector * input_field){
+    int length = 0;
+    while (input_field != NULL){
+        length ++;
+        input_field = input_field->next;
+    }
+    return length;
 }
