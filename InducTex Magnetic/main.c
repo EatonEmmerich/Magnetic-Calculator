@@ -1,4 +1,5 @@
-/*
+/*//Caps parameters
+//
  *  This program uses the equations and algorithms found in
  *  "Mean square flux noise in SQUIDs and qubits: numerical
  *  calculations" by S M Anton, I A B Sognnaes,
@@ -33,7 +34,10 @@ int main(int argc, char *argv[])
     position_vector * j_field_last = NULL;
     position_vector * b_field[MAX_THREADS];  //calculated b_field
     position_vector * b_field_total;
-    vect_list * calc_position;  //position for b_field to be calculated
+    vect_list * calc_position = NULL;  //position for b_field to be calculated
+    vect_list * calc_position_dup[MAX_THREADS];
+    vect_list * calc_position_dup_last = NULL;
+    vect_list * calc_position_temp = calc_position;
     vect_list * dimensions_total = NULL;     //description of j field segments
     vect_list * dimensions[MAX_THREADS];
     vect_list * dimensions_last = NULL;
@@ -180,44 +184,57 @@ int main(int argc, char *argv[])
         printf("\nUsing dim with data in index 1: %lf %lf %lf\n", dimensions_total->vector_element->x, dimensions_total->vector_element->y, dimensions_total->vector_element->z);
 
         /***********************************************
-         *         Add threaded functionality:         *
+         *        Added threaded functionality:        *
          ***********************************************/
         input_length = get_length(j_field_total);
         for(threadcounter = 0; threadcounter < num_threads; threadcounter++){
             dimensions_last = dimensions[threadcounter];
             j_field_last = j_field[threadcounter];
-
+            printf("\n\nThread %d initialized\n\n", threadcounter);
             for(sizecounter = 0; sizecounter < (input_length / num_threads); sizecounter++){
                 if((j_field_total != NULL) && (dimensions_total != NULL)){
                     add_position_vector_pointer(&(j_field[threadcounter]),&j_field_last,j_field_total);
                     //j_field[threadcounter] = j_field_total;
-                    add_vector(&(dimensions[threadcounter]),&dimensions_last,dimensions_total);
+                    add_vector(&(dimensions[threadcounter]),&dimensions_last,dimensions_total->vector_element);
                     //dimensions[threadcounter] = dimensions_total;
                     j_field_total = j_field_total->next;
                     dimensions_total = dimensions_total->next;
                 }
-                else{
-                    break;
-                }
+
             }
+            /*printf("calc_position %d", threadcounter);
+            calc_position_temp = calc_position;
+            while(calc_position_temp != NULL){
+                add_vector(&(calc_position_dup[threadcounter]),&calc_position_dup_last,calc_position_temp->vector_element);
+                printf("calc_position");
+                calc_position_temp = calc_position_temp->next;
+            }*/
         }
-        #pragma omp parallel for [shared(calc_position,j_field,b_field), default(private)]
-        //A,B,C such that total iterations known at start of loop
-        for(threadcounter=0;threadcounter<MAX_THREADS;threadcounter++) {
-        //<your code here>
-        //<force ordered execution of part of the code. A=C willbe guaranteed to execute
-        //before A=C+1>
-            b_field[threadcounter] = calculateBfield(calc_position, j_field[threadcounter], dimensions[threadcounter]);
-           /* #pragma omp ordered
-                {
-                    //<your code here>
-                }*/
+
+
+       // omp_set_num_threads(num_threads);
+       // printf("%d",num_threads);
+        #pragma omp parallel for
+        {
+        for(threadcounter=0;threadcounter<num_threads;threadcounter++) {//A,B,C such that total iterations known at start of loop
+            //<your code here>
+            //<force ordered execution of part of the code. A=C willbe guaranteed to execute
+            //before A=C+1>
+            printf("\n\nThread %d starting\n\n", threadcounter);
+                b_field[threadcounter] = calculateBfield(calc_position, j_field[threadcounter], dimensions[threadcounter]);
+            printf("\n\nThread %d started\n\n", threadcounter);
         }
-        //b_field = calculateBfield(calc_position, j_field[], dimensions[]);
-        printf("\ncompleted calculating B field.\nSaving data to disk.");
-        filename = strcat(filename,"BF");
-        save_position_vector(b_field_total,filename);
-    }
+        }
+
+
+            //b_field = calculateBfield(calc_position, j_field[], dimensions[]);
+            printf("\ncompleted calculating B field.\nSaving data to disk.");
+            filename = strcat(filename,"BF");
+            /*
+            Put b_field into b_field total.
+            */
+            save_position_vector(b_field_total,filename);
+        }
 
     /*
     else{
@@ -225,6 +242,8 @@ int main(int argc, char *argv[])
         printf( "\n\texample: %s ./currdens.txt\nFor more information use %s -help", argv[0],argv[0]);
         return -1;
     }*/
+    printf("press any key to continue.");
+    scanf("%c",inputvalid);
     return 0;
 }
 

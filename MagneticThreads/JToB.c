@@ -33,8 +33,6 @@ position_vector * calculateBfield(vect_list* calc_position, position_vector * cu
     halfofvect(&dimensions);//take half of dimensions to move to the edges of the segments
 
     //Initialize B field to zero, should be same length as current_density.
-    printf("\nStarting calculation process.");
-    printf("\nInitializing B field to zero");
     while(calc_position != NULL){
         b_temp = (position_vector*)malloc(sizeof(position_vector));
         b_temp->current_density = (vect*)malloc(sizeof(vect));
@@ -55,7 +53,6 @@ position_vector * calculateBfield(vect_list* calc_position, position_vector * cu
         b_temp->position->z = calc_position->vector_element->z;
         b_temp->next = NULL;
         add_position_vector_pointer(&b_start,&b,b_temp);
-        printf("\nadded\n");
         /*if(b_start == NULL){
             b = b_temp;
             b_start = b;
@@ -66,11 +63,9 @@ position_vector * calculateBfield(vect_list* calc_position, position_vector * cu
         }*/
 
         calc_position = calc_position->next;
-        printf(".\n");
     }
     b = b_start;
     calc_position = calc_position_start;
-    printf("    ... Done\nCalculating Magnetic field:");
 
     while(current_density != NULL){
        /* printf("start whileloop");
